@@ -58,7 +58,7 @@ public class ProjectServiceImpl implements  ProjectService {
     @Override
     public List<Project> getProjectByTeam(User user, String category, String tag) throws Exception {
 
-        List<Project> projects = projectRepository.findByTeamContainingOrOwner(User user);
+        List<Project> projects = projectRepository.findByTeamContainingOrOwner(user, user);
 
         if(category!=null) {
             projects = projects.stream().filter(project -> project.getCategory().equals(category))
@@ -79,7 +79,7 @@ public class ProjectServiceImpl implements  ProjectService {
         Optional<Project> optionalProject = projectRepository.findById(projectId);
 
         if(optionalProject.isEmpty()){
-            throw new Exception("Project not found.")
+            throw new Exception("Project not found.");
         }
 
         return optionalProject.get();
@@ -156,6 +156,12 @@ public class ProjectServiceImpl implements  ProjectService {
 
         return projectRepository.findByNameContainingAndTeamContains(keyword, user);
     }
+
+
+
+
+
+
 
 
 }

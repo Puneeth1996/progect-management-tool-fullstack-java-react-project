@@ -2,9 +2,12 @@ package com.ticketingtool.controller;
 
 
 import com.ticketingtool.modal.Chat;
+import com.ticketingtool.modal.Invitation;
 import com.ticketingtool.modal.Project;
 import com.ticketingtool.modal.User;
+import com.ticketingtool.request.InviteRequest;
 import com.ticketingtool.response.MessageResponse;
+import com.ticketingtool.service.InvitationService;
 import com.ticketingtool.service.ProjectService;
 import com.ticketingtool.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,8 @@ public class ProjectController {
     private UserService userService;
 
 
+    @Autowired
+    private InvitationService invitationService;
 
 
     @GetMapping
@@ -131,6 +136,37 @@ public class ProjectController {
     }
 
 
+
+
+    @PostMapping("/invite")
+    public ResponseEntity<MessageResponse> inviteProject(
+
+            @RequestBody InviteRequest req,
+            @RequestHeader("Authorization") String jwt,
+            @RequestBody Project project
+    ) throws Exception {
+
+        User user = userService.findUserProfileByJwt(jwt);
+        invitationService.sendInvitation(req.getEmail(), req.getProjectId());
+        MessageResponse res = new MessageResponse("User invitation sent");
+        return new ResponseEntity<>(res, HttpStatus.OK);
+
+    }
+
+    @PostMapping("/invite")
+    public ResponseEntity<Invitation> acceptInviteProject(
+            @RequestParam String token,
+            @RequestHeader("Authorization") String jwt,
+            @RequestBody Project project
+    ) throws Exception {
+
+        User user = userService.findUserProfileByJwt(jwt);
+        Invitation invitation = invitationService.acceptInvitation(token, user.getId());
+        projectService.addUserToProject(invitation.getProjectId(), user.getId());
+
+        return new ResponseEntity<>(invitation, HttpStatus.OK);
+
+    }
 
 
 
