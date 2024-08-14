@@ -140,7 +140,6 @@ public class ProjectController {
 
     @PostMapping("/invite")
     public ResponseEntity<MessageResponse> inviteProject(
-
             @RequestBody InviteRequest req,
             @RequestHeader("Authorization") String jwt,
             @RequestBody Project project
@@ -153,7 +152,7 @@ public class ProjectController {
 
     }
 
-    @PostMapping("/invite")
+    @GetMapping("/invite")
     public ResponseEntity<Invitation> acceptInviteProject(
             @RequestParam String token,
             @RequestHeader("Authorization") String jwt,
