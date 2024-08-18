@@ -7,6 +7,7 @@ import com.ticketingtool.repository.UserRepository;
 import com.ticketingtool.request.LoginRequest;
 import com.ticketingtool.response.AuthResponse;
 import com.ticketingtool.service.CustomUserDetailsImpl;
+import com.ticketingtool.service.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -37,6 +38,10 @@ public class AuthController {
     @Autowired
     private CustomUserDetailsImpl customUserDetails;
 
+    @Autowired
+    private SubscriptionService subscriptionService;
+
+
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> createuserHandler(@RequestBody User user) throws Exception {
         User isUserExist = userRepository.findByEmail(user.getEmail());
@@ -52,6 +57,7 @@ public class AuthController {
 
         User savedUser = userRepository.save(createdUser);
 
+        subscriptionService.createSubscription(savedUser);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
         SecurityContextHolder.getContext().setAuthentication(authentication);
